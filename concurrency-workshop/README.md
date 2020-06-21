@@ -1,22 +1,23 @@
-# concurrency-workshop
+# Concurrency Workshop
 
-A Clojure library designed to ... well, that part is up to you.
+## core.async
 
-## Usage
+1. Introduction to CSP and how it differs from shared-memory concurrency
+    1. What are the common CSP patterns ?
+2. Introduction to core.async library and its capabilities
+    1. Basic APIs like take, put, alts, buffers, go routines
+    2. Some supplementary stuff like pipelines, mix, mult etc
+3. Build an in-memory data processing pipeline using channels
 
-FIXME
+## Format
 
-## License
+- Introduction
+- Introduction to basics and discussion about concurrency
+- Solving thundering herd
+- A few anti patterns with concurrency constructs
+- Introduction to CSP and how it differs from shared-memory concurrency
+- Introduction to core.async library and its capabilities
+- Build an in-memory data processing pipeline using channels
+- Q&A
 
-Copyright © 2020 FIXME
-
-This program and the accompanying materials are made available under the
-terms of the Eclipse Public License 2.0 which is available at
-http://www.eclipse.org/legal/epl-2.0.
-
-This Source Code may also be made available under the following Secondary
-Licenses when the conditions for such availability set forth in the Eclipse
-Public License, v. 2.0 are satisfied: GNU General Public License as published by
-the Free Software Foundation, either version 2 of the License, or (at your
-option) any later version, with the GNU Classpath Exception which is available
-at https://www.gnu.org/software/classpath/license.html.
+**Length**: 5 hours
