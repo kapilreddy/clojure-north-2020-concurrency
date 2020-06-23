@@ -40,7 +40,7 @@
 
   ;; Question : Can you make the above take's callback print a value
 
-  #_(FIXME)
+  (async/put! achan :done)
 
   ;; But this doesnt look like too much fun. Where is the
   ;; sychronisation ?
@@ -64,7 +64,7 @@
   ;; buffer channel. Then what does this create ?
 
   ;; Question : Change the code below to pass the assertion
-  (assert (= FIXME (let [one-chan (async/chan 1)]
+  (assert (= :yes (let [one-chan (async/chan 1)]
                      (async/>!! one-chan :test)
                      :yes)))
 
@@ -85,7 +85,7 @@
   ;; As you can see, only 20 puts were successful
   ;; Question : Can you make the 21st put succeed ?
 
-  FIXME
+  (async/<!! buffer-chan)
 
   ;; Ok, so now we know that run async operations
   ;; and wait for results via channels. But our code is
@@ -143,7 +143,7 @@
   (let [db-chan (async/chan)
         file-chan (async/chan)
         http-chan (async/chan)
-        FIXME]
+        quit-chan (async/timeout 300)]
     (run-long-operation (fn []
                           (Thread/sleep (rand-int 500))
                           :file) file-chan)
@@ -153,7 +153,7 @@
     (run-long-operation (fn []
                           (Thread/sleep (rand-int 500))
                           :http) http-chan)
-    (let [[val port] (async/alts!! [db-chan file-chan http-chan])]
+    (let [[val port] (async/alts!! [db-chan file-chan http-chan quit-chan])]
       (println "Operation which completed first returned : " val)))
 
   ;; But alts!! are more intelligent too. They can essentially
@@ -192,10 +192,6 @@
     (let [c (async/chan)]
       (future (async/>!! c (f)))
       c))
-
-  (defn channel-operation
-    [f]
-    FIXME)
 
   (async/<!! (channel-operation (fn []
                                   42)))
