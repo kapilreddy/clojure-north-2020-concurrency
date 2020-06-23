@@ -189,12 +189,6 @@
 
   (defn channel-operation
     [f]
-    (let [c (async/chan)]
-      (future (async/>!! c (f)))
-      c))
-
-  (defn channel-operation
-    [f]
     FIXME)
 
   (async/<!! (channel-operation (fn []

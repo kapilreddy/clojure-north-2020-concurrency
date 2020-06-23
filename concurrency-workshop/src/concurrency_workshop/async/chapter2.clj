@@ -3,9 +3,6 @@
             [clojure.core.async.impl.protocols :as impl])
   (:import [java.util LinkedList]))
 
-;; this is about go blocks and buffers.
-;; also write a custom buffer for debugging / metrics
-
 (comment
   ;; Threads are great and all but what if we want something
   ;; more lightweight. Something which doesnt hold up a dedicated
