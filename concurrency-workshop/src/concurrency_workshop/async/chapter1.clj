@@ -136,6 +136,7 @@
     (run-long-operation (fn []
                           (Thread/sleep (rand-int 500))
                           :http) http-chan)
+    ;; Here alts is like a control structure similar to a switch
     (let [[val port] (async/alts!! [db-chan file-chan http-chan])]
       (println "Operation which completed first returned : " val)))
 

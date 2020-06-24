@@ -8,5 +8,6 @@
                  [cheshire "5.10.0"]
                  [com.taoensso/nippy "2.14.0"]
                  [clj-time "0.15.2"]
-                 [pandect "0.6.1"]]
+                 [pandect "0.6.1"]
+                 [clj-http "3.10.1"]]
   :repl-options {:init-ns concurrency-workshop.core})

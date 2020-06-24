@@ -5,8 +5,9 @@
 (comment
 
   ;; Merge
-  ;; core.async has a very useful functionality to aid the
-  ;; fan-out -> fan-in pattern i.e merge
+  ;; core.async has a very useful functionality to combine
+  ;; results from multiple channels into 1
+
   ;; The way it works is you can create a merge channel
   ;; which will receive messages from all the merged channels
   ;; until all of them close! This can be used to build interesting
