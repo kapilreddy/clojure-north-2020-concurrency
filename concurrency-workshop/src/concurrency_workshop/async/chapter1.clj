@@ -3,13 +3,36 @@
   (:require [clojure.core.async :as async]))
 
 (comment
-  ;; The basics
+  ;; Let's say we want to wait for a value to arrive
+  ;; A naive way here would be to use promises.
+
+  (def p (promise))
+
+  ;; This thread will wait for another thread to
+  ;; deliver a value on the promise
+  (future
+    (println "Here is the process waiting on a promise : " @p))
+
+  ;; This thread will write the value to the promise
+  (future
+    (deliver p :delivered)
+    (println "This is the thread writing to the channel"))
+
+  ;; Unfortunately though, there is no concept of writers waiting
+  ;; on readers as is possible with CSP
+
+  ;; For example : this is just dropping values after the first write
+  (def another-p (promise))
+  (future
+    (deliver another-p 1)
+    (deliver another-p 2)
+    (deliver another-p 3))
+
 
   ;; A channel is essentially a buffer with
   ;; magic synchronisation properties
 
   (def achan (async/chan)) ;; this is a single item channel
-
 
   ;; lets try and put something on the channel
   ;; Here the port refers to the channel
@@ -153,7 +176,7 @@
     (run-long-operation (fn []
                           (Thread/sleep (rand-int 500))
                           :http) http-chan)
-    (let [[val port] (async/alts!! [db-chan file-chan http-chan])]
+    (let [[val port] (async/alts!! [db-chan file-chan http-chan FIXME])]
       (println "Operation which completed first returned : " val)))
 
   ;; But alts!! are more intelligent too. They can essentially
@@ -189,7 +212,10 @@
 
   (defn channel-operation
     [f]
-    FIXME)
+    (let [c (FIXME)]
+      (FIXME
+       (async/>!! c FIXME))
+      c))
 
   (async/<!! (channel-operation (fn []
                                   42)))

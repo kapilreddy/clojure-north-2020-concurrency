@@ -34,13 +34,15 @@
   ;; Question : Can you guess what would be returned by the channel
   ;; and when ?
 
-  (async/go
-    (println "From the go block : " (async/<! achan)))
-
-  (assert (= FIXME (async/<!! (async/go
+  (future
+    (println "Did we predict the value from the go macro ?"
+             (= FIXME (async/<!! (async/go
                                 (async/>! achan :from-go)
                                 (println "Wrote to the channel")
-                                42))))
+                                42)))))
+
+  (async/go
+    (println "From the go block : " (FIXME achan)))
 
 
   ;; You may have noticed that we have used >! and <! in the go blocks
@@ -84,40 +86,6 @@
 
   ;; And so it follows that you should not use
   ;; Thread/sleep in go blocks. Prefer using async/timeout instead
-
-  ;; Go blocks and GC
-  ;; A channel is puts + buffer + takes
-
-  ;; puts -> [callbacks values]
-  ;; buffer -> queue of values
-  ;; takes -> queue of callbacks
-
-  ;; there can only be pending takes or pending puts, not both
-
-  ;; go blocks -> set of callbacks + local state + return channel
-  ;; channels -> callbacks -> local state -> return channel
-
-  ;; go blocks are either attached to a channel or in a thread-pool
-  ;; So for example,
-
-  (async/go
-    (let [v (async/<! achan)
-          v2 (inc v)]
-      (async/>! anotherChan)))
-
-  ;; here the go block and its local state is held by achan
-  ;; if achan is GC'd, the attached go block and local state is also GC'd
-
-
-  (def foo (async/go
-             (let [c (async/chan)]
-               (async/>! c 42))))
-
-  ;; Here since no one holds a reference to c, it gets GC'd
-  ;; along with the callback i.e the go block and the local state
-  ;; The only thing that remains is a dangling return channel
-  ;; held by foo
-
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
