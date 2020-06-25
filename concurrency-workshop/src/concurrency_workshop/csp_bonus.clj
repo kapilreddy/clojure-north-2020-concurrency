@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.bonus
+(ns concurrency-workshop.csp_bonus
   (:require [clojure.core.async :as async]
             [clj-time.core :as cc]))
 
