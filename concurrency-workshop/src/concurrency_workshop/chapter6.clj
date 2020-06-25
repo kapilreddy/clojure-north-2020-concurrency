@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.chapter3
+(ns concurrency-workshop.chapter6
   (:require [clojure.core.async :as async]
             [clj-time.core :as cc]))
 

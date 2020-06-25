@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.chapter1
+(ns concurrency-workshop.chapter4
   ;; Let's start by requiring the appropriate namespace
   (:require [clojure.core.async :as async]))
 

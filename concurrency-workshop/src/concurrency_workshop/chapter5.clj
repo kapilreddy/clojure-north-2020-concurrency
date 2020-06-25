@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.chapter2
+(ns concurrency-workshop.chapter5
   (:require [clojure.core.async :as async]
             [clojure.core.async.impl.protocols :as impl])
   (:import [java.util LinkedList]))

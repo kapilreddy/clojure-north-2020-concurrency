@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.util
+(ns concurrency-workshop.csp_util
   (:require [taoensso.nippy :as nippy]
             [clj-time.core :as t]
             [pandect.algo.sha1 :as sha1]))

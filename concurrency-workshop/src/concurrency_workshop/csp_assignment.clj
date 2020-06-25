@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.assignment
+(ns concurrency-workshop.csp_assignment
   (:require [taoensso.nippy :as nippy]
             [concurrency-workshop.async.util :as util]))
 

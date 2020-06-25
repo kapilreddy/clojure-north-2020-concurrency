@@ -1,4 +1,4 @@
-(ns concurrency-workshop.async.solution
+(ns concurrency-workshop.csp_solution
   (:require [concurrency-workshop.async.util :as util]
             [clojure.core.async :as async]))
 
