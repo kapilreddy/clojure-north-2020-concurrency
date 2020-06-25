@@ -7,7 +7,7 @@
 (defn make-data []
   (let [raw {:id (.toString (java.util.UUID/randomUUID))
              :s (rand-nth [:temp :humidity :wind])                ;; source
-             :l (rand-nth ["Mumbai" "Kolkatta" "Toronto" "Pune"]) ;; location
+             :l (rand-nth ["SanFrancisco" "NewYork" "Toronto" "Pune"]) ;; location
              :t (.toString (t/now))                               ;; time
              :v (- (rand-int 100) 25)}]
     (assoc raw :h (sha1/sha1-hmac (str raw) "clojure-north"))))
@@ -46,8 +46,15 @@
 
 
 (defn validate [data]
-  (when ((fnil #(> % 0) 0) (:value data))
-    data))
+  (if (or
+       (= (:source data) :temp)
+       (and (= (:source data) :wind)
+            ((fnil #(>= % 0) 0) (:value data)))
+       (and (= (:source data) :humidity)
+            ((fnil #(<= % 100) 100) (:value data))
+            ((fnil #(> % 0) 0) (:value data))))
+    data
+    nil))
 
 
 (defn stream [data]

@@ -1,5 +1,5 @@
 (ns concurrency-workshop.csp_solution
-  (:require [concurrency-workshop.async.util :as util]
+  (:require [concurrency-workshop.csp_util :as util]
             [clojure.core.async :as async]))
 
 (comment
