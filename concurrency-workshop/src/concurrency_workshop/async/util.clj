@@ -13,6 +13,10 @@
     (assoc raw :h (sha1/sha1-hmac (str raw) "clojure-north"))))
 
 
+(defn serialise [data]
+  (nippy/freeze data))
+
+
 (defn deserialise [data]
   (nippy/thaw data))
 
