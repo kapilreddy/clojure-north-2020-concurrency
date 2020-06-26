@@ -11,3 +11,12 @@
   [k v]
   (Thread/sleep (rand-nth [100 300]))
   (swap! r-db assoc k v))
+
+
+(defn fetch-1
+  [k]
+  (Thread/sleep (rand-nth [100 300]))
+  (if (> (rand-int 100) 20)
+    (clojure.core/get @r-db k)
+    (throw (ex-info "MongoDB timeout exception"
+                    {:cause :timeout-exception}))))
