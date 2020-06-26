@@ -240,4 +240,100 @@
   ;; And this is a good thing. This is called backpressure
   ;; and it lets us deal with different rates of writes and reads
   ;; cleanly !
+
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Quit channels
+  ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+
+  ;; So lets say we have a long running processor loop
+  ;; based off a core.async/channel
+
+  (def context {:chan (async/chan 20) :db :mongodb})
+
+  ;; This is the reader loop for the input channel
+  (defn process [in]
+    (future
+      (loop []
+        ;; Read only while the channel is open
+        (FIXME [m (async/<!! in)]
+          (println (format "Received message %s on processor" m ))
+          (Thread/sleep (rand-int 1000))
+          (recur)))
+      (println "Exit")))
+
+  (defn start-processors [context]
+    (process (:chan context)))
+
+  ;; Now lets say we want to have stop functionality
+  ;; which indicates that something somewhere has gone wrong,
+  ;; and we want to exit the channel reader. One obvious way would
+  ;; be to just call close on the channel. Lets see how that works
+
+  (defn stop-processors [context]
+    (async/close! (:chan context)))
+
+  (do
+    (start-processors context)
+    (future
+      (doall
+       (for [i (range 30)]
+         (async/>!! (:chan context) i))))
+    (Thread/sleep 1000)
+    (stop-processors context)
+    (println "Stopped the processor"))
+
+
+  ;; What do you observe ?
+  ;; As you can see, our messages are still being processed well after
+  ;; we called stop. Why is that ?
+
+  ;; So what's our option ?
+  ;; Well another channel ofcourse !
+
+  ;; Lets rewrite the process method to take a stop channel
+  ;; Whenever we receive data on this control channel, we exit.
+
+  (defn process [in stop]
+    (future
+      (loop []
+        (let [[val port] (FIXME [in stop])]
+          (if (identical? in port)
+            (do
+              (println (format "Received message %s on processor" val))
+              (Thread/sleep (rand-int 1000))
+              (recur))
+            (do
+              (println "We have been stopped. Exit")
+              ;; A long cleanup
+              (Thread/sleep 2000)
+              (async/>!! stop :done)))))))
+
+
+  (def context {:chan (async/chan 20)
+                :db :mongodb
+                :stop (async/chan)})
+
+  (defn start-processors [context]
+    (process (:chan context) (:stop context)))
+
+  (defn stop-processors [context]
+    ;; Now instead of calling close!, we just send
+    ;; a stop signal on the control channel
+    (FIXME)
+    ;; A small addition here that you can do is wait for the
+    ;; process being stopped to ack and give it time to clean up
+    (println "Status of the clean up " (async/<!! (:stop context))))
+
+  (do
+    (start-processors context)
+    (future
+      (doall
+       (for [i (range 30)]
+         (async/>!! (:chan context) i))))
+    (Thread/sleep 1000)
+    (stop-processors context)
+    (println "Stopped the processor"))
   )

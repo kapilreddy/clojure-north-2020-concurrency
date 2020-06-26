@@ -267,5 +267,6 @@
       (when-some [v (async/<! out)]
         (println "Got a value in out channel " v)
         (recur)))
-    (async/pipeline 2 out (comp (filter even?) (map #(* 2 %))) in))
+    (async/pipeline 2 out (comp (filter even?)
+                                (map #(* 2 %))) in))
   )

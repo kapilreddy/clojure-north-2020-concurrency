@@ -37,9 +37,9 @@
   (future
     (println "Did we predict the value from the go macro ?"
              (= FIXME (async/<!! (async/go
-                                (async/>! achan :from-go)
-                                (println "Wrote to the channel")
-                                42)))))
+                                   (async/>! achan :from-go)
+                                   (println "Wrote to the channel")
+                                   42)))))
 
   (async/go
     (println "From the go block : " (FIXME achan)))
@@ -121,18 +121,18 @@
   ;; in core.async.impl.buffers
 
   #_(deftype FixedBuffer [^LinkedList buf ^long n]
-    impl/Buffer
-    (full? [this]
-      (>= (.size buf) n))
-    (remove! [this]
-      (.removeLast buf))
-    (add!* [this itm]
-      (.addFirst buf itm)
-      this)
-    (close-buf! [this])
-    clojure.lang.Counted
-    (count [this]
-      (.size buf)))
+      impl/Buffer
+      (full? [this]
+        (>= (.size buf) n))
+      (remove! [this]
+        (.removeLast buf))
+      (add!* [this itm]
+        (.addFirst buf itm)
+        this)
+      (close-buf! [this])
+      clojure.lang.Counted
+      (count [this]
+        (.size buf)))
 
   ;; So lets say we want to implement a Transparent buffer with an inspect
   ;; method
@@ -172,4 +172,23 @@
 
   (println "Data on the channel " (inspect FIXME))
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Buffered channels and data loss
+  ;;
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+  ;; One of the important things to note with Buffered channels is that
+  ;; in real production environments, they can lead to data loss.
+  ;; Imagine a kafka consumer which reads messages in a loop and passes
+  ;; them in to a processing pipeline built on channels. Now a naive way to
+  ;; manage commit offsets here would be to commit once you have put the message
+  ;; on the input channel of the pipeline. Assuming that message will be processed.
+
+  ;; Now imagine your pipelines have buffers of 20 messages, meaning your input channel
+  ;; Can put in 20 * number of processor messages into the pipeline. Now if your process dies
+  ;; and there were messages still on the channels, you have data loss. There are of course ways in
+  ;; which this can be avoided, but a good rule of thumb is to always start with unbuffered channels,
+  ;; measure performance and only shift to buffered channels, if you notice unacceptable backpressure
+  ;; on the input side. For example, if a kafka consumer waits for more than a minute while it is just
+  ;; writing to a channel, Kafka tends to force a rebalance.
   )
