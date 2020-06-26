@@ -68,6 +68,9 @@
 
   (async/go (write-in-go (async/chan)))
 
+
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
   ;; Go blocks are not suitable if you have a large number of
   ;; blocking IO calls. This is because Go blocks are backed by
   ;; by a fixed size thread pool which will quickly be exhausted
@@ -77,7 +80,6 @@
   (async/go
     (async/>! output (blocking-http-call url)))
 
-
   ;; Do this
 
   (async/go
@@ -86,6 +88,11 @@
 
   ;; And so it follows that you should not use
   ;; Thread/sleep in go blocks. Prefer using async/timeout instead
+
+  ;; core.async also provides async/thread API which creates
+  ;; a new thread from another dedicated thread pool. Use this
+  ;; if you want a more dedicated thread of execution.
+  ;; Or if you are okay with a full blown Java thread, use futures etc
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
