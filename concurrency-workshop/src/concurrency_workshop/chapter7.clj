@@ -5,6 +5,30 @@
 
 (comment
 
+  ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+  ;; Deadlocks
+  ;; Does all this mean I never have to worry about deadlocks again ?
+  ;; Well, no
+  ;; By its very nature the concept of blocking reads and writes means
+  ;; that channels are also susceptible to deadlocks.
+  ;; Lets create a contrived example !
+
+  (let [c1 (async/chan)
+        c2 (async/chan)
+        c3 (async/chan)]
+    (async/go-loop []
+      (async/>! c2 (async/<! c1))
+      (println "C1 done")
+      (recur))
+    (async/go-loop []
+      (async/>! c3 (async/<! c2))
+      (println "C2 done")
+      (recur))
+    (async/go-loop []
+      (async/>! c1 (async/<! c3))
+      (println "C3 done")
+      (recur)))
+
   ;; Design patterns with core.async
 
   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
