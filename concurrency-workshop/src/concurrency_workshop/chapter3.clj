@@ -58,7 +58,7 @@
 
 
   (do
-   (reset! cb-atom-2 0)
+   (reset! cb-atom-1 0)
    (frequencies (map deref (map (fn [_]
                                   (future (req-handler-1 :foo)))
                                 (range 10000)))))
